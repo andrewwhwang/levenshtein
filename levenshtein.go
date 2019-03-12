@@ -1,3 +1,11 @@
+/*
+Based on http://www.mi.fu-berlin.de/wiki/pub/ABI/Lecture2Materials/Unit1Lecture2.pdf
+Levenshtein edit distance with:
+	Distance() = Ukkonen's edit distance algo. Memory O(n)
+	MyerDist() = Myer's bit-parallel algo. Time and Memory O(n) if len(strings) <= 64
+	MyerDistDiag() = Myer's bit-parallel algo + Ukkonen's Diagonal cuttoff 
+		Time (w*n) where w = specified width of diag. Memory O(n)
+*/
 package levenshtein
 
 func minUint64(a, bitArrays uint64) uint64 {
