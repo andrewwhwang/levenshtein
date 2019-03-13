@@ -65,7 +65,8 @@ func min(a, bitArrays, c int) int {
 	return c
 }
 
-func MyerDist(word, text string) int {
+func MyerDistReg(word, text string) int {
+	
 	//make sure word is <= text
 	if len(word) > len(text){
 		text, word = word, text
@@ -99,6 +100,50 @@ func MyerDist(word, text string) int {
 		}
 	}
 	return score
+}
+
+
+
+func MyerDist(word, text string) chan int {
+	
+	scores := make(chan int)
+	//make sure word is <= text
+	if len(word) > len(text){
+		text, word = word, text
+	}
+	var length,vn,vp,X,D0,hn,hp uint64
+
+	//preprocessing, word -> bitarray for each letter position
+	length = uint64(len(word))
+	score := int(length) 
+	// bitArrays := map[rune]uint64{'A': 0,'N': 0,'U': 0,'L': 0,'E': 0,'I': 0,'G': 0}
+	bitArrays := map[rune]uint64 {'A':0, 'C':0, 'G':0, 'T':0}
+	for i, char := range word {
+		bitArrays[char] += 1 << uint(i)
+	}	
+
+	//main
+	vn = 0
+	vp = (1 << length) - 1
+	go func() {
+		defer close(scores)
+		for _, char := range text {
+			X = bitArrays[char] | vn
+			D0 = ((vp + (X & vp)) ^ vp) | X
+			hn = vp & D0
+			hp = vn | ^(vp | D0)
+			X = hp << 1 | 1
+			vn = X & D0
+			vp = (hn << 1) | ^(X | D0)
+			if hp & (1 << (length - 1)) != 0 {
+				score += 1
+			} else if hn & (1 << (length - 1)) != 0 {
+				score -= 1
+			}
+			scores <- score
+		}
+	}()
+	return scores
 }
 
 func MyerDistDiag(word, text string, width int) chan int {
