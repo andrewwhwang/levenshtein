@@ -106,7 +106,7 @@ func MyerDistReg(word, text string) int {
 
 func MyerDist(word, text string) chan int {
 	
-	scores := make(chan int)
+	scores := make(chan int, 10)
 	//make sure word is <= text
 	if len(word) > len(text){
 		text, word = word, text
@@ -147,7 +147,7 @@ func MyerDist(word, text string) chan int {
 }
 
 func MyerDistDiag(word, text string, width int) chan int {
-	scores := make(chan int)
+	scores := make(chan int, 10)
 
 	if width >= 63{
 		panic("width too big")
